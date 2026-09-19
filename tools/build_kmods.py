@@ -283,9 +283,15 @@ def package(work,owrt,b,system):
     for module in kernels.glob('*.ko'):module.unlink()
     for rel in ['etc/modules.d','etc/modules-boot.d']:
         shutil.rmtree(system/rel);(system/rel).mkdir()
-    common=[apk,'--root',system,'--arch','aarch64_generic','--repositories-file','/dev/null',
-            '--repository',str(output/'packages.adb'),'--no-network','--no-scripts']
-    run(*common,'add','--upgrade','kernel='+abi,*[n+'='+abi for n in sorted(base)])
+    owrt_repo = owrt / 'bin/packages/aarch64_generic'
+    extra_repos = []
+    if owrt_repo.exists():
+        for adb in owrt_repo.rglob('*.adb'):
+            extra_repos += ['--repository', str(adb)]
+
+    common = [apk, '-v', '--root', system, '--arch', 'aarch64_generic', '--repositories-file', '/dev/null',
+              '--repository', str(output / 'packages.adb')] + extra_repos + ['--no-network', '--no-scripts']
+    run(*common, 'add', '--upgrade', 'kernel=' + abi, *[n + '=' + abi for n in sorted(base)])
     after=installed(system)
     lost={n for n in before if n!='kernel' and not n.startswith('kmod-')} - set(after)
     if lost:raise ValueError('Kernel migration removed userspace packages: '+', '.join(sorted(lost)))
