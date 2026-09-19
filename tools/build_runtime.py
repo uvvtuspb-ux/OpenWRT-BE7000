@@ -76,7 +76,7 @@ def archive_source(work,name,url):
             cached=work/'openwrt/dl'/archive.name
             if cached.is_file():shutil.copy2(cached,archive)
             else:urllib.request.urlretrieve(url,archive)
-        with tarfile.open(archive) as t:t.extractall(work,filter='data')
+        with tarfile.open(archive) as t:t.extractall(work)
     return tree
 
 def modules(work,k,b,cross,jobs):
@@ -188,7 +188,7 @@ def assemble(work,owrt,built,busy,kexec):
     system=kit/'system';system.mkdir(parents=True)
     archives=list((owrt/'bin/targets/armsr/armv8').glob('*-generic-rootfs.tar.gz'))
     if len(archives)!=1:raise ValueError('Expected one OpenWrt rootfs archive')
-    with tarfile.open(archives[0]) as t:t.extractall(system,filter='tar',numeric_owner=True)
+    with tarfile.open(archives[0]) as t:t.extractall(system,numeric_owner=True)
     # The generic armsr kernel is only a build dependency. BE7000 uses QSDK.
     for rel in ['lib/modules','etc/modules.d','etc/modules-boot.d']:
         path=system/rel
