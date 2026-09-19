@@ -24,7 +24,7 @@ jobs:
             gettext git libncurses-dev libssl-dev \
             python3-distutils rsync unzip zlib1g-dev file wget curl libelf-dev \
             gcc-aarch64-linux-gnu g++-aarch64-linux-gnu \
-            device-tree-compiler u-boot-tools bc
+            device-tree-compiler u-boot-tools bc qemu-user-static
 
       - name: Run build script
         run: |
