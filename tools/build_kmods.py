@@ -156,7 +156,9 @@ def configure(owrt,k,b,common):
 def module_info(path):
     data=subprocess.check_output(['modinfo',str(path)],text=True)
     fields=dict(line.split(':',1) for line in data.splitlines() if ':' in line)
-    return fields['name'].strip().replace('-','_'),[n.replace('-','_') for n in fields.get('depends','').strip().split(',')]
+    mod_name = fields.get('name', path.stem).strip().replace('-','_')
+    deps = [n.replace('-','_') for n in fields.get('depends','').strip().split(',') if n.strip()]
+    return mod_name, deps
 
 
 def installed(root):
